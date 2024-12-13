@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2024-12-07 17:08:49 by Eclipse SUMO sumo Version 1.13.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="SubFile/SubTry.net.xml"/>
+        <route-files value="SubFile/SubTry.rou.xml"/>
+    </input>
+
+    <output>
+        <lanechange-output value="SubFile/lanechange.out.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="60"/>
+        <step-length value="1"/>
+    </time>
+
+    <processing>
+        <lanechange.duration value="3"/>
+    </processing>
+
+    <traci_server>
+        <remote-port value="12734"/>
+    </traci_server>
+
+    <gui_only>
+        <start value="true"/>
+        <tracker-interval value="1"/>
+    </gui_only>
+
+</configuration>
+-->
+
+<lanechanges>
+    <change id="hv.68" type="HV" time="15.00" from="Input_0" to="Input_1" dir="1" speed="15.74" pos="180.33" reason="speedGain" leaderGap="53.80" leaderSecureGap="17.88" leaderSpeed="14.90" followerGap="None" followerSecureGap="None" followerSpeed="None" origLeaderGap="26.16" origLeaderSecureGap="15.78" origLeaderSpeed="15.70"/>
+    <change id="hv.68" type="HV" time="24.00" from="Input_1" to="Input_2" dir="1" speed="16.71" pos="330.25" reason="speedGain" leaderGap="114.98" leaderSecureGap="13.09" leaderSpeed="18.14" followerGap="None" followerSecureGap="None" followerSpeed="None" origLeaderGap="39.34" origLeaderSecureGap="21.96" origLeaderSpeed="14.97"/>
+    <change id="hv.56" type="HV" time="27.00" from="Input_0" to="Input_1" dir="1" speed="17.65" pos="1436.27" reason="strategic" leaderGap="119.90" leaderSecureGap="17.93" leaderSpeed="17.56" followerGap="149.60" followerSecureGap="16.19" followerSpeed="17.28" origLeaderGap="63.06" origLeaderSecureGap="19.22" origLeaderSpeed="17.13"/>
+    <change id="hv.54" type="HV" time="30.00" from="Input_1" to="Input_2" dir="1" speed="17.61" pos="1613.89" reason="speedGain" leaderGap="391.12" leaderSecureGap="20.43" leaderSpeed="16.63" followerGap="33.50" followerSecureGap="12.44" followerSpeed="16.20" origLeaderGap="48.49" origLeaderSecureGap="16.45" origLeaderSpeed="17.99"/>
+    <change id="hv.45" type="HV" time="32.00" from=":J1_0_1" to=":J1_0_2" dir="1" speed="12.57" pos="0.94" reason="speedGain" leaderGap="102.27" leaderSecureGap="10.01" leaderSpeed="12.87" followerGap="20.02" followerSecureGap="16.16" followerSpeed="13.24" origLeaderGap="34.12" origLeaderSecureGap="13.55" origLeaderSpeed="11.08"/>
+    <change id="hv.58" type="HV" time="46.00" from="Input_0" to="Input_1" dir="1" speed="18.01" pos="1669.59" reason="strategic" leaderGap="104.52" leaderSecureGap="17.75" leaderSpeed="18.13" followerGap="54.87" followerSecureGap="14.99" followerSpeed="17.25" origLeaderGap="155.47" origLeaderSecureGap="20.79" origLeaderSpeed="17.12"/>
+    <change id="cv.12" type="CV" time="48.00" from="Input_1" to="Input_2" dir="1" speed="9.41" pos="2361.20" reason="cooperative|urgent" leaderGap="21.79" leaderSecureGap="19.17" leaderSpeed="11.63" followerGap="58.06" followerSecureGap="21.35" followerSpeed="15.94" origLeaderGap="22.86" origLeaderSecureGap="19.68" origLeaderSpeed="11.41"/>
+    <change id="hv.49" type="HV" time="51.00" from="Input_0" to="Input_1" dir="1" speed="3.44" pos="2396.16" reason="strategic|urgent" leaderGap="12.55" leaderSecureGap="0.91" leaderSpeed="10.42" followerGap="177.40" followerSecureGap="45.58" followerSpeed="16.26" origLeaderGap="13.17" origLeaderSecureGap="0.91" origLeaderSpeed="10.42"/>
+    <change id="hv.31" type="HV" time="57.00" from="Input_0" to="Input_1" dir="1" speed="14.64" pos="904.16" reason="speedGain" leaderGap="27.35" leaderSecureGap="12.48" leaderSpeed="15.53" followerGap="29.24" followerSecureGap="16.43" followerSpeed="15.15" origLeaderGap="21.66" origLeaderSecureGap="14.64" origLeaderSpeed="14.64"/>
+</lanechanges>
