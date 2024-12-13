@@ -23,13 +23,10 @@ def multiProcess(processNum,vehs,suggestLCs):
 
     # 使用多进程执行仿真
     for i in range(processNum):
-        vehs_copy = copy.deepcopy(vehs)  # 确保每个进程有独立的车辆数据副本
-        suggestLC_copy = suggestLCs[i]  # 获取当前进程的建议变道信息
-
-        p = multiprocessing.Process(target=multiSimExecute, args=(vehs, suggestLC_copy,i,queue))
+        p = multiprocessing.Process(target=multiSimExecute, args=(vehs, suggestLCs[i],i,queue))
         processes.append(p)
         p.start()
-        print(time.time())
+        # print(time.time())
 
     # 等待所有进程完成
     for p in processes:
@@ -40,9 +37,9 @@ def multiProcess(processNum,vehs,suggestLCs):
     return results
 
 
-def processExecute(processNum,vehs,suggestLCs):
+def processExecute(processNum,orgVehsInfo,suggestLCs):
     if processNum == 1:
-        results = singleProcess(vehs,suggestLCs[0])
+        results = singleProcess(orgVehsInfo,suggestLCs[0])
     else:
-        results = multiProcess(processNum,vehs,suggestLCs)
+        results = multiProcess(processNum,orgVehsInfo,suggestLCs)
     return results

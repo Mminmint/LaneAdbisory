@@ -39,7 +39,6 @@ class Vehicle:
     '''
     车辆刚进入车道时获取车道信息并初始化换道信息
     对于CV和CAV，初始化换道优化参数
-    对于HV，设定换道模型
     Application: allVehs
     '''
     def initLCInfo(self):
@@ -49,14 +48,9 @@ class Vehicle:
         if self.type:
             # 换道建议执行信息
             self.isSuggestLC = False
-            self.targetLane = None      # str: "Input_1"
-            self.LCReactTime = -1      # int
             self.lastLCTime = -1        # int
             self.lastSLCTime = -1       # int
             self.totalLCTimes = 0
-        else:
-            traci.vehicle.setLaneChangeMode(self.vehId, 0b011001010100)
-            self.LCModel = 0b011001010100
 
 
     '''
@@ -77,9 +71,9 @@ class Vehicle:
     Application: HVs
     '''
     def staticLateMerge(self):
-        if 1400 < self.position < 1500:
-            traci.vehicle.setLaneChangeMode(self.vehId, 1621)
-            self.LCModel = 1621
+        if 1450 < self.position < 1550:
+            traci.vehicle.setLaneChangeMode(self.vehId, 0b010101000101)
+            self.LCModel = 0b010101000101
 
 
     '''
@@ -87,9 +81,8 @@ class Vehicle:
     获取左侧车道前后车信息判断间隙
     Application: optVehs
     '''
-    # todo: 约束有效性，再看看模型
     def LCSafetyLeft(self,vehs):
-        # traci给出的相对距离会减去miniGap
+        # traci给出的相对距离会减去miniGap(2.5m)
         vehIdLL, distLL = trimTuple(traci.vehicle.getNeighbors(self.vehId, 0b00000010))
         vehIdLF, distLF = trimTuple(traci.vehicle.getNeighbors(self.vehId, 0b00000000))
 
@@ -102,19 +95,19 @@ class Vehicle:
 
         t_ch = 3        # 变道时间
         t_act = 1       # 车辆感知到前车减速的反应时间
-        h_min = 1       # tlv后端到tfv前端的车距最小要求
-        a_min = -4.5    # 最大减速度
+        t_avg = 3       # todo:敏感度参数
+        a_min = 4.5    # 最大减速度（绝对值
 
-        # 如果不满足约束，则返回-1
-        constrain1 = distLL + speedLF*t_ch + 0.5*a_min*t_ch*t_ch \
-                     - self.speed*t_ch - 0.5*a_min*(t_ch-t_act)*(t_ch-t_act) - h_min
+        # 如果不满足约束，则返0
+        constrain1 = distLL + speedLL*(t_ch+t_avg) + (1/(2*a_min))*(speedLL*speedLL-self.speed*self.speed)\
+                     - self.speed*(t_ch+t_act+t_avg)
         if constrain1 < 0:
-            return -1
+            return 0
 
-        constrain2 = distLF + self.speed*t_ch + 0.5*a_min*t_ch*t_ch \
-                     - speedLL*t_ch - 0.5*a_min*(t_ch-t_act)*(t_ch-t_act) - h_min
+        constrain2 = distLF + self.speed*(t_ch+t_avg) + (1/(2*a_min))*(self.speed*self.speed-speedLF*speedLF) \
+                     - speedLF*(t_ch+t_act+t_avg)
 
-        return -1 if constrain2 <0 else 1
+        return 0 if constrain2 < 0 else 1
 
 
     '''
@@ -124,39 +117,36 @@ class Vehicle:
     '''
     def LCSafetyRight(self,vehs):
         # traci给出的相对距离会减去miniGap
-        vehIdOL, distOL = traci.vehicle.getLeader(self.vehId) if traci.vehicle.getLeader(self.vehId) is not None else (None,None)
-        vehIdOF, distOF = traci.vehicle.getFollower(self.vehId) if traci.vehicle.getFollower(self.vehId) is not None else (None,None)
         vehIdRL, distRL = trimTuple(traci.vehicle.getNeighbors(self.vehId, 0b00000011))
         vehIdRF, distRF = trimTuple(traci.vehicle.getNeighbors(self.vehId, 0b00000001))
 
         distRL = distRL if distRL is not None else 300
         distRF = distRF if distRF is not None else 300
 
-        self.vehOL = vehs.get(vehIdOL, None) if vehIdOL is not None else None
-        self.vehOF = vehs.get(vehIdOF, None) if vehIdOF is not None else None
         self.vehRL = vehs.get(vehIdRL,None) if vehIdRL is not None else None
         self.vehRF = vehs.get(vehIdRF,None) if vehIdRF is not None else None
 
         t_ch = 3        # 变道时间
         t_act = 1       # 车辆感知到前车减速的反应时间
-        h_min = 1       # tlv后端到tfv前端的车距最小要求
+        t_avg = 3       # todo:敏感度参数
         a_min = -4.5    # 最大减速度
 
         speedRF = self.vehRF.speed if self.vehRF else 0     # 获取目标车道后车信息
         speedRL = self.vehRL.speed if self.vehRL else 25    # 获取目标车道前车信息
 
-        # 如果不满足约束，则返回-1
-        constrain1 = distRL + speedRF*t_ch + 0.5*a_min*t_ch*t_ch \
-                     - self.speed*t_ch - 0.5*a_min*(t_ch-t_act)*(t_ch-t_act) - h_min
+        # 如果不满足约束，则返回0
+        constrain1 = distRL + speedRL * (t_ch+t_avg) + (1 / (2 * a_min)) * (speedRL * speedRL - self.speed * self.speed) \
+                     - self.speed * (t_ch + t_act + t_avg)
         if constrain1 < 0:
-            return -1
+            return 0
 
-        constrain2 = distRF + self.speed*t_ch + 0.5*a_min*t_ch*t_ch \
-                     - speedRL*t_ch - 0.5*a_min*(t_ch-t_act)*(t_ch-t_act) - h_min
-        return -1 if constrain2 <0 else 1
+        constrain2 = distRF + self.speed * (t_ch + t_avg) + (1 / (2 * a_min)) * (
+                    self.speed * self.speed - speedRF * speedRF) \
+                     - speedRF * (t_ch + t_act + t_avg)
+
+        return 0 if constrain2 <0 else 1
 
 
-    # todo:这个self.LCModel在simPredict中用了吗
     '''
     换道引导频率约束
     包括与上一次换道、建议换道时间的间隔，总换道次数
@@ -174,10 +164,10 @@ class Vehicle:
             traci.vehicle.setLaneChangeMode(self.vehId, 256)
             self.LCModel = 256
             return 0
-        # 总换道次数过多且不在开放车道，采用静态晚合流
+        # 总换道次数过多且不在开放车道，采用CV自身換道模型
         if self.totalLCTimes >= 5 and not self.laneIndex:
-            traci.vehicle.setLaneChangeMode(self.vehId,1621)
-            self.LCModel = 1621
+            traci.vehicle.setLaneChangeMode(self.vehId,0b011000001001)
+            self.LCModel = 0b011000001001
             return 0
 
         return 1
@@ -185,25 +175,7 @@ class Vehicle:
 
     '''
     设置换道引导参数
-    当车辆在优化后接到速度引导后，需要改变参数记录
+    当车辆在优化后接到换道引导后，需要改变参数记录
     '''
-    def setLGInfo(self, step: int, targetLane: str, reactTime: int):
+    def setLGInfo(self, step: int):
         self.lastSLCTime = step
-        self.targetLane = targetLane
-        self.LCReactTime = reactTime
-
-
-    '''
-    换道执行函数
-    若反应时间到了，在规定duration内换道
-    '''
-    def LCExecute(self, isLC, duration=-1):
-        if isLC:
-            print("aaa")
-            # duration:车辆会在这个时间内换道
-            traci.vehicle.changeLane(self.vehId, int(self.targetLane[-1]), duration)
-            self.isSuggestLC = False
-            self.targetLane = None      # str: "Input_1"
-            self.LCReactTime = -1       # int
-        else:
-            self.LCReactTime -= 1

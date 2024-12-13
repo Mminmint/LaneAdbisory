@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2024-12-07 17:08:49 by Eclipse SUMO sumo Version 1.13.0
+<!-- generated on 2024-12-13 17:04:09 by Eclipse SUMO sumo Version 1.13.0
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
@@ -23,7 +23,7 @@
     </processing>
 
     <traci_server>
-        <remote-port value="12734"/>
+        <remote-port value="10247"/>
     </traci_server>
 
     <gui_only>
@@ -35,13 +35,24 @@
 -->
 
 <lanechanges>
-    <change id="hv.68" type="HV" time="15.00" from="Input_0" to="Input_1" dir="1" speed="15.74" pos="180.33" reason="speedGain" leaderGap="53.80" leaderSecureGap="17.88" leaderSpeed="14.90" followerGap="None" followerSecureGap="None" followerSpeed="None" origLeaderGap="26.16" origLeaderSecureGap="15.78" origLeaderSpeed="15.70"/>
-    <change id="hv.68" type="HV" time="24.00" from="Input_1" to="Input_2" dir="1" speed="16.71" pos="330.25" reason="speedGain" leaderGap="114.98" leaderSecureGap="13.09" leaderSpeed="18.14" followerGap="None" followerSecureGap="None" followerSpeed="None" origLeaderGap="39.34" origLeaderSecureGap="21.96" origLeaderSpeed="14.97"/>
-    <change id="hv.56" type="HV" time="27.00" from="Input_0" to="Input_1" dir="1" speed="17.65" pos="1436.27" reason="strategic" leaderGap="119.90" leaderSecureGap="17.93" leaderSpeed="17.56" followerGap="149.60" followerSecureGap="16.19" followerSpeed="17.28" origLeaderGap="63.06" origLeaderSecureGap="19.22" origLeaderSpeed="17.13"/>
-    <change id="hv.54" type="HV" time="30.00" from="Input_1" to="Input_2" dir="1" speed="17.61" pos="1613.89" reason="speedGain" leaderGap="391.12" leaderSecureGap="20.43" leaderSpeed="16.63" followerGap="33.50" followerSecureGap="12.44" followerSpeed="16.20" origLeaderGap="48.49" origLeaderSecureGap="16.45" origLeaderSpeed="17.99"/>
-    <change id="hv.45" type="HV" time="32.00" from=":J1_0_1" to=":J1_0_2" dir="1" speed="12.57" pos="0.94" reason="speedGain" leaderGap="102.27" leaderSecureGap="10.01" leaderSpeed="12.87" followerGap="20.02" followerSecureGap="16.16" followerSpeed="13.24" origLeaderGap="34.12" origLeaderSecureGap="13.55" origLeaderSpeed="11.08"/>
-    <change id="hv.58" type="HV" time="46.00" from="Input_0" to="Input_1" dir="1" speed="18.01" pos="1669.59" reason="strategic" leaderGap="104.52" leaderSecureGap="17.75" leaderSpeed="18.13" followerGap="54.87" followerSecureGap="14.99" followerSpeed="17.25" origLeaderGap="155.47" origLeaderSecureGap="20.79" origLeaderSpeed="17.12"/>
-    <change id="cv.12" type="CV" time="48.00" from="Input_1" to="Input_2" dir="1" speed="9.41" pos="2361.20" reason="cooperative|urgent" leaderGap="21.79" leaderSecureGap="19.17" leaderSpeed="11.63" followerGap="58.06" followerSecureGap="21.35" followerSpeed="15.94" origLeaderGap="22.86" origLeaderSecureGap="19.68" origLeaderSpeed="11.41"/>
-    <change id="hv.49" type="HV" time="51.00" from="Input_0" to="Input_1" dir="1" speed="3.44" pos="2396.16" reason="strategic|urgent" leaderGap="12.55" leaderSecureGap="0.91" leaderSpeed="10.42" followerGap="177.40" followerSecureGap="45.58" followerSpeed="16.26" origLeaderGap="13.17" origLeaderSecureGap="0.91" origLeaderSpeed="10.42"/>
-    <change id="hv.31" type="HV" time="57.00" from="Input_0" to="Input_1" dir="1" speed="14.64" pos="904.16" reason="speedGain" leaderGap="27.35" leaderSecureGap="12.48" leaderSpeed="15.53" followerGap="29.24" followerSecureGap="16.43" followerSpeed="15.15" origLeaderGap="21.66" origLeaderSecureGap="14.64" origLeaderSpeed="14.64"/>
+    <change id="hv.123" type="HV" time="4.00" from="Input_0" to="Input_1" dir="1" speed="16.18" pos="103.37" reason="strategic" leaderGap="64.33" leaderSecureGap="16.07" leaderSpeed="16.30" followerGap="43.99" followerSecureGap="17.74" followerSpeed="16.64" origLeaderGap="43.65" origLeaderSecureGap="17.54" origLeaderSpeed="15.76"/>
+    <change id="cv.62" type="CV" time="5.00" from="Input_2" to="Input_1" dir="-1" speed="18.20" pos="1446.42" reason="traci|urgent" leaderGap="55.94" leaderSecureGap="33.56" leaderSpeed="14.64" followerGap="23.69" followerSecureGap="10.96" followerSpeed="17.01" origLeaderGap="104.92" origLeaderSecureGap="20.72" origLeaderSpeed="18.66"/>
+    <change id="hv.122" type="HV" time="8.00" from="Input_0" to="Input_1" dir="1" speed="15.16" pos="212.53" reason="strategic" leaderGap="21.59" leaderSecureGap="10.26" leaderSpeed="17.18" followerGap="40.06" followerSecureGap="19.95" followerSpeed="16.48" origLeaderGap="29.24" origLeaderSecureGap="16.90" origLeaderSpeed="14.56"/>
+    <change id="hv.100" type="HV" time="10.00" from="Input_1" to="Input_2" dir="1" speed="14.06" pos="1151.57" reason="speedGain" leaderGap="55.60" leaderSecureGap="2.40" leaderSpeed="19.03" followerGap="36.53" followerSecureGap="29.66" followerSpeed="17.96" origLeaderGap="26.03" origLeaderSecureGap="13.79" origLeaderSpeed="14.17"/>
+    <change id="hv.76" type="HV" time="16.00" from="Input_0" to="Input_1" dir="1" speed="5.85" pos="1992.25" reason="strategic|urgent" leaderGap="11.90" leaderSecureGap="3.20" leaderSpeed="11.16" followerGap="82.96" followerSecureGap="37.45" followerSpeed="15.85" origLeaderGap="None" origLeaderSecureGap="None" origLeaderSpeed="None"/>
+    <change id="hv.98" type="HV" time="18.00" from="Input_1" to="Input_2" dir="1" speed="13.95" pos="1328.23" reason="speedGain" leaderGap="31.64" leaderSecureGap="1.99" leaderSpeed="19.11" followerGap="51.02" followerSecureGap="20.68" followerSpeed="15.81" origLeaderGap="20.41" origLeaderSecureGap="14.11" origLeaderSpeed="13.90"/>
+    <change id="hv.90" type="HV" time="34.00" from="Input_0" to="Input_1" dir="1" speed="8.10" pos="1986.97" reason="strategic|urgent" leaderGap="13.10" leaderSecureGap="6.57" leaderSpeed="11.62" followerGap="44.27" followerSecureGap="24.63" followerSpeed="14.14" origLeaderGap="None" origLeaderSecureGap="None" origLeaderSpeed="None"/>
+    <change id="cv.60" type="CV" time="34.00" from="Input_1" to="Input_2" dir="1" speed="11.80" pos="1941.41" reason="cooperative|urgent" leaderGap="None" leaderSecureGap="None" leaderSpeed="None" followerGap="33.00" followerSecureGap="25.28" followerSpeed="17.04" origLeaderGap="44.27" origLeaderSecureGap="24.63" origLeaderSpeed="9.69"/>
+    <change id="hv.93" type="HV" time="37.00" from="Input_0" to="Input_1" dir="1" speed="7.26" pos="1989.41" reason="strategic|urgent" leaderGap="None" leaderSecureGap="None" leaderSpeed="None" followerGap="36.09" followerSecureGap="11.19" followerSpeed="10.06" origLeaderGap="None" origLeaderSecureGap="None" origLeaderSpeed="None"/>
+    <change id="hv.94" type="HV" time="39.00" from="Input_0" to="Input_1" dir="1" speed="8.52" pos="1984.44" reason="strategic|urgent" leaderGap="17.48" leaderSecureGap="9.12" leaderSpeed="8.99" followerGap="12.46" followerSecureGap="5.70" followerSpeed="7.56" origLeaderGap="None" origLeaderSecureGap="None" origLeaderSpeed="None"/>
+    <change id="hv.120" type="HV" time="44.00" from="Input_0" to="Input_1" dir="1" speed="15.43" pos="850.37" reason="strategic" leaderGap="29.96" leaderSecureGap="9.40" leaderSpeed="18.07" followerGap="34.64" followerSecureGap="21.02" followerSpeed="17.06" origLeaderGap="170.29" origLeaderSecureGap="10.54" origLeaderSpeed="17.63"/>
+    <change id="hv.121" type="HV" time="45.00" from="Input_0" to="Input_1" dir="1" speed="14.64" pos="798.20" reason="strategic" leaderGap="23.18" leaderSecureGap="11.68" leaderSpeed="16.44" followerGap="25.18" followerSecureGap="20.55" followerSpeed="16.54" origLeaderGap="61.81" origLeaderSecureGap="14.21" origLeaderSpeed="15.43"/>
+    <change id="hv.97" type="HV" time="51.00" from="Input_0" to="Input_1" dir="1" speed="5.70" pos="1992.36" reason="strategic|urgent" leaderGap="10.82" leaderSecureGap="1.96" leaderSpeed="11.09" followerGap="60.73" followerSecureGap="29.32" followerSpeed="13.68" origLeaderGap="None" origLeaderSecureGap="None" origLeaderSpeed="None"/>
+    <change id="hv.92" type="HV" time="56.00" from="Input_1" to="Input_2" dir="1" speed="9.98" pos="1959.85" reason="cooperative|urgent" leaderGap="9.19" leaderSecureGap="4.80" leaderSpeed="14.24" followerGap="90.23" followerSecureGap="27.47" followerSpeed="15.51" origLeaderGap="27.31" origLeaderSecureGap="11.15" origLeaderSpeed="10.74"/>
+    <change id="cv.65" type="CV" time="56.00" from="Input_1" to="Input_2" dir="1" speed="9.09" pos="1918.39" reason="cooperative|urgent" leaderGap="35.58" leaderSecureGap="19.71" leaderSpeed="10.89" followerGap="49.65" followerSecureGap="20.49" followerSpeed="15.51" origLeaderGap="35.58" origLeaderSecureGap="19.71" origLeaderSpeed="10.89"/>
+    <change id="hv.99" type="HV" time="59.00" from="Input_0" to="Input_1" dir="1" speed="4.28" pos="1994.96" reason="strategic|urgent" leaderGap="15.31" leaderSecureGap="2.85" leaderSpeed="9.84" followerGap="76.36" followerSecureGap="28.65" followerSpeed="13.35" origLeaderGap="15.94" origLeaderSecureGap="2.85" origLeaderSpeed="9.84"/>
+    <change id="hv.102" type="HV" time="59.00" from="Input_0" to="Input_1" dir="1" speed="11.87" pos="1965.91" reason="strategic|urgent" leaderGap="31.65" leaderSecureGap="29.14" leaderSpeed="6.48" followerGap="39.71" followerSecureGap="13.11" followerSpeed="13.35" origLeaderGap="31.65" origLeaderSecureGap="29.14" origLeaderSpeed="6.48"/>
+</lanechanges>
+9" type="HV" time="59.00" from="Input_0" to="Input_1" dir="1" speed="4.28" pos="1994.96" reason="strategic|urgent" leaderGap="15.31" leaderSecureGap="2.85" leaderSpeed="9.84" followerGap="76.36" followerSecureGap="28.65" followerSpeed="13.35" origLeaderGap="15.94" origLeaderSecureGap="2.85" origLeaderSpeed="9.84"/>
+    <change id="hv.102" type="HV" time="59.00" from="Input_0" to="Input_1" dir="1" speed="11.87" pos="1965.91" reason="strategic|urgent" leaderGap="31.65" leaderSecureGap="29.14" leaderSpeed="6.48" followerGap="39.71" followerSecureGap="13.11" followerSpeed="13.35" origLeaderGap="31.65" origLeaderSecureGap="29.14" origLeaderSpeed="6.48"/>
 </lanechanges>

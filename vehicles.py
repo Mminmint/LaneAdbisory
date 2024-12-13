@@ -7,7 +7,7 @@ import copy
 import random
 import traci
 from vehicle import Vehicle
-from collections import defaultdict
+from collections import defaultdict,deque
 from typing import Tuple
 
 
@@ -16,7 +16,7 @@ class Vehicles:
     def __init__(self):
         self.vehs = {}
         self.lastVehs = {}
-        self.prepareLC = {}
+        self.prepareLC = [{},{},{},{}]      # todo:敏感性参数
 
 
     '''
@@ -43,7 +43,8 @@ class Vehicles:
             if not veh.type:
                 veh.staticLateMerge()
             else:
-                self.addOptVeh(veh)
+                if "Input" in veh.lane:
+                    self.addOptVeh(veh)
 
 
     '''
@@ -60,26 +61,28 @@ class Vehicles:
 
 
     '''
-    判断当前车辆是否在控制范围[500,2500]内
+    判断当前车辆是否在控制范围[0,1500]内
     在optVehs中加入
     为超过控制范围的车辆设置晚合流控制
     '''
     def addOptVeh(self,veh:Vehicle):
-        if 200 < veh.position < 2200:
+        if 0 < veh.position < 1500:
             self.optVehs[veh.vehId] = veh
-        elif 2200 < veh.position < 2300:
-            traci.vehicle.setLaneChangeMode(veh.vehId, 1621)
-            veh.LCModel = 1621
+        elif 1750 <= veh.position < 1850:
+            traci.vehicle.setLaneChangeMode(veh.vehId, 0b011000001001)
+            veh.LCModel = 0b011000001001
 
 
     '''
     【main】
-    将满足频率、安全的车辆依据车道给出
+    将满足频率、安全的可优化车辆依据车道给出
     readyLC: {0:["cv_0","cav_3"],1:["cv_1","cv_2","cav_2"]}
     '''
     def readyOptByLane(self):
         readyLC = defaultdict(list)
+        count = 0
 
+        # optVehs确保了车辆在0-1500的Input段
         for vehId,veh in self.optVehs.items():
             if veh.LCFrequency(self.step):
                 if not veh.laneIndex:       # laneIndex为0
@@ -88,10 +91,12 @@ class Vehicles:
                     readyLCTag = veh.LCSafetyRight(self.vehs)
                 else:
                     readyLCTag = veh.LCSafetyLeft(self.vehs) and veh.LCSafetyRight(self.vehs)
+
                 if readyLCTag:
                     readyLC[veh.laneIndex].append(vehId)
+                    count += 1
 
-        return readyLC
+        return readyLC,count
 
 
     '''
@@ -107,32 +112,40 @@ class Vehicles:
 
         for vehID,laneID in suggestLC.items():
             veh = self.vehs[vehID]
-            veh.setLGInfo(self.step,'Input_'+str(laneID),reactTime)
-            self.prepareLC[vehID] = self.vehs[vehID]
+            veh.setLGInfo(self.step)
+            self.prepareLC[reactTime-1][vehID] = 'Input_'+str(laneID)
 
 
     '''
     为先前收到换道引导指令的车辆执行建议
-    体现不确定参数：换道执行时间
     '''
     # todo:不确定性参数分布待确定
-    def executeLCs(self,executeDuration,executeBias):
-        tmpPrepareLC = copy.deepcopy(self.prepareLC)
-        print(tmpPrepareLC)
-        for vehID,veh in tmpPrepareLC.items():
-            print(vehID,veh.LCReactTime)
-            # 若是正在执行中，要获取随机参数duration
-            if not veh.LCReactTime:
-                # 换道执行时间均匀分布
-                upLimit = executeDuration * (1 + executeBias)
-                duration = round(random.uniform(3, upLimit))
+    def executeLCs(self):
+        nowLC = self.prepareLC[0]
 
-                veh.LCExecute(isLC=1, duration=duration)
-                del self.prepareLC[vehID]
-            else:
-                veh.LCExecute(isLC=0)
+        for vehID,targetLane in nowLC.items():
+            traci.vehicle.changeLane(vehID, int(targetLane[-1]), 3)
+
+        self.prepareLC.pop(0)
+        self.prepareLC.append({})
 
 
     def deinit(self):
         self.lastVehs = self.vehs
         self.vehs = {}
+
+
+    def organizeInfo(self):
+        orgVehsInfo = []
+
+        for vehId,veh in self.vehs.items():
+            if "Input" in veh.lane:
+                type = veh.type
+                lane = veh.lane
+                position = veh.position
+                speed = veh.speed
+                LCModel = veh.LCModel
+                orgVehsInfo.append((vehId,type,lane,position,speed,LCModel))
+
+        return orgVehsInfo
+

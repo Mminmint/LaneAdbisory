@@ -51,9 +51,9 @@ def startSUMO(gui:bool,sumocfgFile:str):
 
     # 构造sumoBinary与sumoCmd
     if gui:
-        sumoBinary = "D:/Program Files (x86)/Eclipse/Sumo/bin/sumo-gui"
+        sumoBinary = "sumo-gui"
     else:
-        sumoBinary = "D:/Program Files (x86)/Eclipse/Sumo/bin/sumo"
+        sumoBinary = "sumo"
     sumoCmd = [sumoBinary, "-c", sumocfgFile]
 
     return sumoCmd

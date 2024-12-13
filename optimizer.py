@@ -3,22 +3,25 @@
 # @Author  : Mminmint
 # @File    : optimizer.py
 # @Software: PyCharm
+
 import random
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+
+
 from copy import deepcopy
 from multiProcess import processExecute
 from operator import itemgetter
 from typing import List,Dict
-from matplotlib import rcParams
-
-config = {
-    "font.family": 'serif',
-    "mathtext.fontset": 'stix',  # matplotlib渲染数学字体时使用的字体，和Times New Roman差别不大
-    "font.serif": ['SimSun'],  # 宋体
-    'axes.unicode_minus': False  # 处理负号，即-号
-}
-rcParams.update(config)
+# from matplotlib import rcParams
+#
+# config = {
+#     "font.family": 'serif',
+#     "mathtext.fontset": 'stix',  # matplotlib渲染数学字体时使用的字体，和Times New Roman差别不大
+#     "font.serif": ['SimSun'],  # 宋体
+#     'axes.unicode_minus': False  # 处理负号，即-号
+# }
+# rcParams.update(config)
 
 
 class Optimizer:
@@ -51,10 +54,36 @@ class Optimizer:
         return initPop
 
 
+    '''初始化种群（n≤2）'''
+    def initSmallPopulation(self, count):
+        # lane0: -1,1   lane1: -1,0,2   lane2: 1,-1
+        if count == 1:
+            if self.LCBound[1]:
+                initPop = [{'LC': [-1], 'fit': -1}, {'LC': [0], 'fit': -1}, {'LC': [2], 'fit': -1}]
+            else:
+                initPop = [{'LC': [-1], 'fit': -1},{'LC': [1], 'fit': -1}]
+        else:
+            if (self.LCBound[0] == 2) or (self.LCBound[2] == 2) or ((self.LCBound[0] == 1) and (self.LCBound[2] == 1)):
+                initPop = [{'LC': [-1, -1], 'fit': -1}, {'LC': [1, 1], 'fit': -1},
+                           {'LC': [-1, 1], 'fit': -1}, {'LC': [1, -1], 'fit': -1}]
+            elif self.LCBound[1] == 2:
+                initPop = [{'LC': [-1, -1], 'fit': -1}, {'LC': [0, 0], 'fit': -1},
+                           {'LC': [2, 2], 'fit': -1}, {'LC': [-1, 0], 'fit': -1},
+                           {'LC': [-1, 2], 'fit': -1}, {'LC': [0, -1], 'fit': -1},
+                           {'LC': [0, 2], 'fit': -1}, {'LC': [2, 0], 'fit': -1},
+                           {'LC': [2, -1], 'fit': -1}]
+            elif ((self.LCBound[0] == 1) or (self.LCBound[2] == 1)) and (self.LCBound[1] == 1):
+                initPop = [{'LC': [-1,-1], 'fit': -1}, {'LC': [-1,0], 'fit': -1},
+                           {'LC': [-1,2], 'fit': -1}, {'LC': [1,-1], 'fit': -1},
+                           {'LC': [1,0], 'fit': -1}, {'LC': [1,2], 'fit': -1}]
+
+        return initPop
+
+
     '''选择种群中的最优个体'''
     def selectBest(self,popWithFit:List[Dict]) -> Dict:
-        sortPop = sorted(popWithFit,key=itemgetter("fit"),reverse=True)
-        return sortPop[0]
+        sortPop = sorted(popWithFit,key=itemgetter("fit"),reverse=True)     # 降序
+        return sortPop[0]       # 返回最大值
 
     '''
     将便于变换的列表形式转换为真正需要换道的字典形式
@@ -75,25 +104,21 @@ class Optimizer:
         return suggestLC
 
 
-    '''计算一个种群的适应度'''
-    def fitness(self,pop:List[Dict]) -> List[Dict]:
-        waitFitness = []
+    '''快速计算一个种群的适应度'''
+    def quickFitness(self,pop:List[Dict],count) -> List[Dict]:
+        suggestLCs = []
 
-        for i in range(len(pop)):
-            if pop[i]['fit'] == -1:
-                # 要进行一个readyLC和suggestLC的转换
-                suggestLC = self.transReadyToSuggest(pop[i])
-                waitFitness.append((i,suggestLC))
+        for i in range(count):
+            # 要进行readyLC和suggestLC的转换
+            suggestLC = self.transReadyToSuggest(pop[i])
+            suggestLCs.append(suggestLC)
 
         # 有需要预测的适应度时
-        if len(waitFitness):
-            suggestLCs = [x[1] for x in waitFitness]
-            results = processExecute(len(waitFitness),self.vehs,suggestLCs)
+        results = processExecute(count,self.orgVehsInfo,suggestLCs)
 
-            # 和pop中的序号对上，赋值fit
-            for i in range(len(waitFitness)):
-                index = waitFitness[i][0]
-                pop[index]['fit'] = results[i]
+        # 和pop中的序号对上，赋值fit
+        for i in range(count):
+            pop[i]['fit'] = results[i]
 
         return pop
 
@@ -128,6 +153,7 @@ class Optimizer:
         pos2 = random.randrange(0, len(self.readyLC))
         if pos2 < pos1:
             pos1,pos2 = pos2,pos1
+
         crossOff1['LC'] = offSpring1['LC'][:pos1]+offSpring2['LC'][pos1:pos2]+offSpring1['LC'][pos2:]
         crossOff2['LC'] = offSpring2['LC'][:pos1]+offSpring1['LC'][pos1:pos2]+offSpring2['LC'][pos2:]
 
@@ -153,25 +179,39 @@ class Optimizer:
         return crossOff
 
 
-    '''迭代图绘制'''
-    def iterPlot(self,allFits):
-        plt.figure(figsize=(4, 2))
-        plt.plot(allFits)
-        plt.xlim([1, 20])
-        plt.xticks(range(1, self.popNum, 2))
-        plt.xlabel('迭代次数', fontsize=12)
-        plt.ylabel('平均行驶距离/m', fontsize=12)
-        plt.show()
+    # '''迭代图绘制'''
+    # def iterPlot(self,allFits):
+    #     plt.figure(figsize=(4, 2))
+    #     plt.plot(allFits)
+    #     plt.xlim([1, 20])
+    #     plt.xticks(range(1, self.popNum, 2))
+    #     plt.xlabel('迭代次数', fontsize=12)
+    #     plt.ylabel('平均行驶距离/m', fontsize=12)
+    #     plt.show()
 
 
     '''优化主函数'''
     # todo:多进程
-    def optimize(self,vehs,readyLC,LCBound):
+    def optimize(self,orgVehsInfo,readyLC,LCBound,readyLCCount):
         # 参数初始化
         print('-------------start-------------')
-        self.vehs = vehs
+        self.orgVehsInfo = orgVehsInfo
         self.readyLC = readyLC
         self.LCBound = LCBound
+
+        # 如果车辆数≤3时，给另一种优化算法
+        if readyLCCount <= 2:
+            # 种群初始化
+            initPop = self.initSmallPopulation(readyLCCount)
+            # 为初始化的种群计算fitness
+            popWithFit = self.quickFitness(initPop,len(initPop))
+            # 找到当前最优个体
+            self.bestIndividual = self.selectBest(popWithFit)
+            # 转化为下达命令的形式
+            bestLC = self.transReadyToSuggest(self.bestIndividual)
+
+            return bestLC
+
         bestTimes = 1
         allFits,bestIndividuals = [],[]
 
@@ -180,7 +220,7 @@ class Optimizer:
         #           {'LC': [-1,1,-1,-1,2,-1,1], 'fit': -1}]
         initPop = self.initPopulation()
         # 为初始化的种群计算fitness
-        popWithFit = self.fitness(initPop)
+        popWithFit = self.quickFitness(initPop,self.popNum)
         # 找到当前最优个体
         self.bestIndividual = self.selectBest(popWithFit)
         bestFit = self.bestIndividual['fit']
@@ -194,16 +234,18 @@ class Optimizer:
 
             while len(nextOff) != self.popNum:
                 offSpring1,offSpring2 = [selectPop.pop() for _ in range(2)]  # 后代间两两选择
+                # 交叉
                 if random.random() < self.crossParam:
                     if len(self.readyLC) > 1:
                         crossOff1, crossOff2 = self.crossover(offSpring1,offSpring2)
+                        # 变异
                         if random.random() < self.mutationParam:
                             mutationOff1 = self.mutation(crossOff1)
                             mutationOff2 = self.mutation(crossOff2)
-                            popWithFit = self.fitness([mutationOff1,mutationOff2])
+                            popWithFit = self.quickFitness([mutationOff1,mutationOff2],2)
                             nextOff.extend(popWithFit)
                         else:
-                            popWithFit = self.fitness([crossOff1, crossOff2])
+                            popWithFit = self.quickFitness([crossOff1, crossOff2],2)
                             nextOff.extend(popWithFit)
                     else:
                         nextOff.extend([offSpring1, offSpring2])
@@ -212,7 +254,6 @@ class Optimizer:
 
             popWithFit = nextOff
             bestIndividual = self.selectBest(popWithFit)
-            curBestLC = bestIndividual['LC']
             curFit = bestIndividual['fit']
 
             # 更新最优算子
@@ -220,21 +261,19 @@ class Optimizer:
                 self.bestIndividual = bestIndividual
                 bestIndividuals.append(deepcopy(self.bestIndividual))
                 bestFit = curFit
+                bestTimes = 1
+            else:
+                bestTimes += 1
+
             allFits.append(bestFit)
 
             # 判断终止条件
-            if self.bestIndividual['LC'] == curBestLC:
-                bestTimes += 1
-            else:
-                bestTimes = 1
-
             if bestTimes >= self.sameBestTimes:
                 break
 
-        print(allFits)
-        self.iterPlot(allFits)
+        # print(allFits)
+        # self.iterPlot(allFits)
 
         bestLC = self.transReadyToSuggest(self.bestIndividual)
-        # self.bestLC = {'cv.0':1,'cv.5':1,'cav.2':1}
 
         return bestLC
